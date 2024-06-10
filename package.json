@@ -1,0 +1,14 @@
+{
+  "name": "low-code",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "pnpm -F @czy/editor dev",
+    "dev:ui": "pnpm -F @czy/ui-config dev",
+    "build:ui":"pnpm -F @czy/ui-config build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
