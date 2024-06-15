@@ -7,12 +7,14 @@ export interface BtnConfig {
 
 const btnConfig: BtnConfig = {
   color: {
-    title: "文字颜色",
+    label: "文字颜色",
     value: "",
+    type: "string",
   },
   backgroundColor: {
-    title: "背景色",
+    label: "背景色",
     value: "",
+    type: "string",
   },
 };
 

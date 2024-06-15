@@ -11,7 +11,6 @@ import { ref } from "vue";
 const num = ref(0);
 
 const handleClick = () => {
-  console.log("click");
   num.value = num.value + 1;
 };
 </script>
