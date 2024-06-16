@@ -12,7 +12,7 @@
               @click="handleRemove($event, element)"
             />
           </div>
-          <component :is="element.Comp" />
+          <component :is="element.Comp" :data="element.data" />
         </div>
       </template>
     </draggable>
@@ -26,23 +26,24 @@ const store = useStore();
 
 const handleClick = (element: any) => {
   if (element.id === store.configSchema.id) return;
-  const config = store.cacheConfigSchema.find(
-    (item: any) => item.id === element.id
-  );
-  if (config) return store.setConfigSchema(config);
+  const config = store.list.find((item: any) => item.id === element.id);
+  if (config)
+    return store.setConfigSchema({
+      data: config.data || {},
+      id: config.id,
+      ...config.schema,
+    });
   // 初始化表单数据
   const data: any = {};
   Object.keys(element.schema).forEach(
     (item) => (data[item] = element.schema[item].value)
   );
   const schema = { ...element.schema, id: element.id, data };
-  store.addCacheConfigSchema(schema);
   store.setConfigSchema(schema);
 };
 
 const handleRemove = (e: any, element: any) => {
   store.removeList(element);
-  store.removeCacheConfigSchema(element);
   // 如果删除的元素 是正在配置的参数 则需要清空config列表
   if (element.id === store.configSchema.id) {
     store.configSchema = {};

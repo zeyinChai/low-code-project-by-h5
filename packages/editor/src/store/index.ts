@@ -4,7 +4,6 @@ import uiData from "@czy/ui-config";
 interface State {
   list: any[];
   configSchema: any;
-  cacheConfigSchema: any[];
   [key: string]: any;
 }
 
@@ -14,12 +13,18 @@ export const useStore = defineStore("editor", {
       uiData,
       list: [],
       configSchema: {},
-      cacheConfigSchema: [],
     };
   },
   actions: {
     addList(item: any) {
       this.list.push(item);
+    },
+    addListData(id: any, data: any) {
+      this.list.find((item, index) => {
+        if (id === item.id) {
+          this.list.splice(index, 1, { ...item, data });
+        }
+      });
     },
     removeList(item: any) {
       const newList = this.list.filter((listItem) => listItem.id !== item.id);
@@ -27,22 +32,6 @@ export const useStore = defineStore("editor", {
     },
     setConfigSchema(schema: any) {
       this.configSchema = schema;
-    },
-    addCacheConfigSchema(schema: any) {
-      this.cacheConfigSchema.push(schema);
-    },
-    setCacheConfigSchema(obj: any) {
-      this.cacheConfigSchema.find((item, index) => {
-        if (item.id === obj.id) {
-          this.cacheConfigSchema.splice(index, 1, obj);
-        }
-      });
-    },
-    removeCacheConfigSchema(item: any) {
-      const newList = this.cacheConfigSchema.filter(
-        (listItem) => listItem.id !== item.id
-      );
-      this.cacheConfigSchema = newList;
     },
   },
 });
