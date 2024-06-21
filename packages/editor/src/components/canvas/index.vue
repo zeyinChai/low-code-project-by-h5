@@ -1,54 +1,62 @@
 <template>
   <div class="content">
-    <template v-if="!store.list.length">
+    <template v-if="!list.length">
       <el-empty description="暂无组件" />
     </template>
-    <draggable :list="store.list" item-key="id">
-      <template #item="{ element }">
-        <div class="list-group-item" @click="handleClick(element)">
-          <div style="width: 100%; display: flex; justify-content: end">
-            <Delete
-              style="width: 18px; height: 18px; cursor: pointer"
-              @click="handleRemove($event, element)"
-            />
+    <template v-else>
+      <draggable :list="list" item-key="id" @end="dragEnd">
+        <template #item="{ element }">
+          <div class="list-group-item" @click="handleClick(element)">
+            <div style="width: 100%; display: flex; justify-content: end">
+              <Delete
+                style="width: 18px; height: 18px; cursor: pointer"
+                @click="handleRemove($event, element)"
+              />
+            </div>
+            <component :is="element.Comp" :data="element.data" />
           </div>
-          <component :is="element.Comp" :data="element.data" />
-        </div>
-      </template>
-    </draggable>
+        </template>
+      </draggable>
+    </template>
   </div>
 </template>
 
 <script lang="ts" setup>
 import draggable from "vuedraggable";
-import { useStore } from "@/store";
-const store = useStore();
+import { onMounted, ref } from "vue";
+import { getUIMap, dataFormat, listFormat } from "@/utils/format";
+const list = ref<any[]>([]);
+
+onMounted(() => {
+  const uiMap = getUIMap();
+  window.addEventListener("message", (data) => {
+    const curData: any[] = data.data;
+    curData.forEach((item) => {
+      item.Comp = uiMap[item.Comp];
+    });
+    list.value = curData;
+  });
+});
 
 const handleClick = (element: any) => {
-  if (element.id === store.configSchema.id) return;
-  const config = store.list.find((item: any) => item.id === element.id);
-  if (config)
-    return store.setConfigSchema({
-      data: config.data || {},
-      id: config.id,
-      ...config.schema,
-    });
-  // 初始化表单数据
-  const data: any = {};
-  Object.keys(element.schema).forEach(
-    (item) => (data[item] = element.schema[item].value)
-  );
-  const schema = { ...element.schema, id: element.id, data };
-  store.setConfigSchema(schema);
+  send("setConfigSchema", dataFormat(element));
 };
 
 const handleRemove = (e: any, element: any) => {
-  store.removeList(element);
-  // 如果删除的元素 是正在配置的参数 则需要清空config列表
-  if (element.id === store.configSchema.id) {
-    store.configSchema = {};
-  }
+  send("removeElement", dataFormat(element));
   e.stopPropagation();
+};
+
+const send = (type: string, element: any) => {
+  window.parent.postMessage({ type, element }, window.location.href);
+};
+
+const dragEnd = () => {
+  const data = listFormat(list.value);
+  data.forEach((item: any) => {
+    item.Comp = item.key;
+  });
+  send("changePosition", data);
 };
 </script>
 

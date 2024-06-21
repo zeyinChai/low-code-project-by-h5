@@ -24,7 +24,7 @@ import { useStore } from "@/store";
 const store = useStore();
 
 const handleClick = (item: any) => {
-  store.addList({ ...item, id: Date.now() });
+  store.addList({ ...item, id: Date.now(), Comp: item.key });
 };
 </script>
 

@@ -14,7 +14,6 @@
           <el-button type="primary" @click="submitForm(ruleFormRef)">
             提交
           </el-button>
-          <el-button @click="resetForm(ruleFormRef)">重置为初始状态</el-button>
         </el-form-item>
         <template v-for="item in Object.keys(configSchema)" :key="item">
           <template v-if="configSchema[item].type === 'string'">
@@ -106,10 +105,6 @@ const submitForm = (formEl: FormInstance | undefined) => {
       });
     }
   });
-};
-const resetForm = (formEl: FormInstance | undefined) => {
-  if (!formEl) return;
-  formEl.resetFields();
 };
 </script>
 
