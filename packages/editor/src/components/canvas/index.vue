@@ -30,8 +30,8 @@ const list = ref<any[]>([]);
 onMounted(() => {
   const uiMap = getUIMap();
   window.addEventListener("message", (data) => {
-    const curData: any[] = data.data;
-    curData.forEach((item) => {
+    const curData: any[] = data.data || [];
+    curData?.forEach((item) => {
       item.Comp = uiMap[item.Comp];
     });
     list.value = curData;
